@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+=======
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -218,3 +225,4 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+>>>>>>> 50da73b35489dca93b8b5eb2f51bf2b0c9e1d46b
