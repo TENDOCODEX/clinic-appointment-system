@@ -12,5 +12,5 @@ clinic = Clinic("City Medical Centre")
 
 clinic.add_appointment(appointment)
 
-print(clinic._name)
-print(len(clinic._appointments))
+print(clinic.name)
+print(len(clinic.appointments))

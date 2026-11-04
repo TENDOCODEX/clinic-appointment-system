@@ -3,9 +3,9 @@ from abc import ABC, abstractmethod
 
 
 class Person(ABC):
+    _constructed_count = 0
 
     def __init__(self, name, person_id):
-
         # Validate name
         if not isinstance(name, str) or not name.strip():
             raise ValueError("Name cannot be empty")
@@ -13,6 +13,8 @@ class Person(ABC):
         # Validate ID
         if isinstance(person_id, bool) or not isinstance(person_id, int) or person_id <= 0:
             raise ValueError("ID must be a positive integer")
+
+        Person._constructed_count += 1
 
         # Private attributes
         self.__name = name.strip()
