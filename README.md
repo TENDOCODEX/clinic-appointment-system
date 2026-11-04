@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Clinic Appointment Management System
 
 ## 1. Project Description
@@ -189,3 +190,7 @@ That kind of failure should not be ignored. It should be raised or treated as an
 This project brings together several object-oriented ideas: encapsulation, validation, inheritance, polymorphism and business rules between objects. The system is not only storing appointments; it is also enforcing rules so that the clinic behaves like a realistic appointment manager.
 
 The project stays consistent with the first three questions because all later additions build on the same design instead of replacing it. That is why the model remains clean and easy to follow.
+=======
+# clinic-appointment-system
+Clinic Appointment Management System
+>>>>>>> 50da73b35489dca93b8b5eb2f51bf2b0c9e1d46b
