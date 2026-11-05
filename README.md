@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+
 # Clinic Appointment Management System
 
 ## 1. Project Description
@@ -115,6 +116,36 @@ The appointment system also follows strict rules:
 
 The clinic also keeps its own invariants such as unique appointment IDs and valid appointment objects only.
 
+## Question 3 – Staff Fees and Polymorphism
+
+### Fee Calculations
+
+The system calculates staff fees using the patient's ID (P).
+
+- **Doctor:** `40 + 5 * (patient_id % 5)`
+- **Nurse:** `10 + (patient_id % 3)`
+- **Pharmacist:** `5`
+
+### Polymorphism
+
+The abstract `fee(patient_id)` method is defined in the Staff class. Doctor, Nurse and Pharmacist each provide their own implementation.
+
+A single loop iterates through a list of Staff objects and calls `role()` and `fee(patient_id)` without using `isinstance()`, `instanceof` or type tags.
+
+```
+for staff in staff_members:
+    print(f"Role: {staff.role()}")
+    print(f"Fee: ${staff.fee(patient.person_id)}")
+```
+
+### Extensibility
+
+A new Staff subclass can implement the required abstract methods without modifying the existing fee loop or Clinic class.
+
+### Testing
+
+Four unit tests were implemented and passed, covering the three fee calculations and calculations using different patient IDs.
+
 ---
 
 ## 4. Question 4 – Clinic Logging and Safe Lifecycle
@@ -153,7 +184,7 @@ The `P` in the formula means the patient number or patient ID. In the fee formul
 
 - Doctor fee = 40 + 5 × (P mod 5)
 - Nurse fee = 10 + (P mod 3)
-- Pharmacist fee = 15
+- Pharmacist fee = 5
 
 This means the patient number is used to vary the fee or business rule according to the patient’s ID.
 
@@ -162,18 +193,23 @@ This means the patient number is used to vary the fee or business rule according
 ## Design Decision Log
 
 ### D1. Where does the 2-hour rule live?
+
 I kept the cancellation rule inside the `Appointment` class because it belongs to the appointment itself. The clinic only checks whether the appointment is valid before it is accepted.
 
 ### D2. Why is the clock design stable?
+
 The clock is passed in as an object with a `now()` method. This makes it easier to test the code and keeps the logic separate from the system clock.
 
 ### D3. What changed when I added Pharmacist?
+
 Not much in the appointment logic itself. The real change was extending the `Staff` hierarchy and keeping the `fee()` method consistent, so appointments can still work with any staff type without special-case checks.
 
 ### D4. What should happen if `MedicalLecturer.fee()` returns, and why does `Person` not get created twice?
+
 `MedicalLecturer` should still use the doctor fee logic, because in this system it is still treated as a doctor. The reason `Person` is not created twice is because it is the parent class of the hierarchy, and the subclass only adds more behaviour.
 
 ### D5. What should happen if writing or closing the log itself fails?
+
 That kind of failure should not be ignored. It should be raised or treated as an error, otherwise the system may continue without tracking real problems.
 
 ### D6. For the twist:
@@ -189,8 +225,10 @@ That kind of failure should not be ignored. It should be raised or treated as an
 
 This project brings together several object-oriented ideas: encapsulation, validation, inheritance, polymorphism and business rules between objects. The system is not only storing appointments; it is also enforcing rules so that the clinic behaves like a realistic appointment manager.
 
-The project stays consistent with the first three questions because all later additions build on the same design instead of replacing it. That is why the model remains clean and easy to follow.
-=======
+# The project stays consistent with the first three questions because all later additions build on the same design instead of replacing it. That is why the model remains clean and easy to follow.
+
 # clinic-appointment-system
+
 Clinic Appointment Management System
->>>>>>> 50da73b35489dca93b8b5eb2f51bf2b0c9e1d46b
+
+> > > > > > > 50da73b35489dca93b8b5eb2f51bf2b0c9e1d46b
