@@ -11,5 +11,5 @@ class Nurse(Staff):
     def role(self):
         return "Nurse"
 
-    def fee(self):
-        return 10
+    def fee(self, patient_id):
+        return 10 + (patient_id % 3)

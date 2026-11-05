@@ -10,5 +10,5 @@ class Staff(Person):
         return 0
 
     @abstractmethod
-    def fee(self):
+    def fee(self, patient_id):
         pass
