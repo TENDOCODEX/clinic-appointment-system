@@ -61,7 +61,7 @@ class Clinic:
         self.__log.info("[LOG] waiting patient queued for %s at hour %s", patient.name, start_hour)
 
     def calculate_fee(self, patient, staff):
-        fee = staff.fee()
+        fee = staff.fee(patient.person_id)
         if getattr(patient, "patient_type", "visitor") == "student":
             return fee * 0.5
         if getattr(patient, "patient_type", "visitor") == "staff_member":

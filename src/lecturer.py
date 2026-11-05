@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 
-from src.person import Person
-
 
 class Lecturer(ABC):
+
     def __init__(self, module_name):
         if not isinstance(module_name, str) or not module_name.strip():
             raise ValueError("Module name cannot be empty")
+
         self._module_name = module_name.strip()
 
     @property
