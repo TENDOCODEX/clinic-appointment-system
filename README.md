@@ -1,5 +1,12 @@
 # Clinic Appointment Management System
 
+## Group Members
+
+Rutendo Sengera R2420416
+Fadzayi B Nyaguse R2420429
+
+# Clinic Appointment Management System
+
 ## 1. Project Description
 
 This project is a clinic appointment management system developed in Python using object-oriented programming principles. It manages patients, medical staff, appointments and clinic operations while enforcing the rules specified in the assignment.
@@ -224,4 +231,3 @@ The Clinic Appointment Management System demonstrates object-oriented programmin
 It also applies business rules to appointment management, staff scheduling, fee calculations and clinic logging.
 
 The implementation builds on the original class structure while allowing additional staff types and clinic rules to be introduced without unnecessary changes to existing functionality.
-
