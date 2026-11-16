@@ -1,6 +1,6 @@
 import io
 import unittest
-from contextlib import redirect_stdout
+from unittest.mock import patch
 
 from src.appointment import Appointment
 from src.clinic import Clinic
@@ -17,7 +17,7 @@ class Tasks456Tests(unittest.TestCase):
         clinic = Clinic("Test Clinic")
         buf = io.StringIO()
 
-        with redirect_stdout(buf):
+        with patch.object(clinic._Clinic__log.handlers[0], "stream", buf):
             clinic.open_log()
             clinic.add_appointment(Appointment(1, Patient("A", 10), Doctor("Dr X", 20), 9))
             try:
@@ -37,15 +37,15 @@ class Tasks456Tests(unittest.TestCase):
         after = getattr(Patient, "_constructed_count", 0)
         self.assertTrue(isinstance(lecturer, Doctor))
         self.assertTrue(isinstance(lecturer, Lecturer))
-        self.assertEqual(lecturer.role(), "Doctor")
+        self.assertEqual(lecturer.role(), "Doctor and Lecturer")
         self.assertEqual(lecturer.module_name, "Surgery")
         self.assertEqual(lecturer.fee(), 40 + 5 * (77 % 5))
-        self.assertEqual(after, before)
+        self.assertEqual(after - before, 1)
 
     def test_clinic_forces_unique_and_buffer_rules(self):
         clinic = Clinic("Test Clinic")
         patient_a = Patient("A", 11)
-        patient_b = Patient("B", 12)
+        patient_b = Patient("B", 12, "staff_member")
         doctor = Doctor("Dr S", 21)
 
         clinic.add_appointment(Appointment(1, patient_a, doctor, 10))

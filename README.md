@@ -1,11 +1,10 @@
-<<<<<<< HEAD
 # Clinic Appointment Management System
 
 ## 1. Project Description
 
-This project is a clinic appointment system built in Python. It models patients, staff, appointments and clinic operations using object-oriented programming. The main aim was to keep the code simple while still following the rules and constraints in the assignment.
+This project is a clinic appointment management system developed in Python using object-oriented programming principles. It manages patients, medical staff, appointments and clinic operations while enforcing the rules specified in the assignment.
 
-I used encapsulation, validation and inheritance to keep the system under control. Each class has its own responsibility and the clinic is responsible for checking the rules between appointments and staff.
+The system uses encapsulation, abstraction, inheritance, polymorphism and validation to maintain data integrity and ensure that appointments follow the required business rules.
 
 ## 2. Class Diagram
 
@@ -20,7 +19,6 @@ classDiagram
 
     class Patient {
         +role()
-        +patient_type
         +discount_rate()
     }
 
@@ -49,7 +47,6 @@ classDiagram
     }
 
     class Lecturer {
-        <<abstract>>
         -module_name
         +role()*
     }
@@ -88,109 +85,143 @@ classDiagram
     Staff <|-- Pharmacist
     Doctor <|-- MedicalLecturer
     Lecturer <|-- MedicalLecturer
-    Appointment --> Patient : books
-    Appointment --> Staff : assigned to
-    Clinic o-- Appointment : manages
+    Appointment --> Patient
+    Appointment --> Staff
+    Clinic o-- Appointment
 ```
 
 ## 3. Question 2 – Encapsulation and Invariants
 
-I made sure the important data was hidden and only accessed through controlled methods and properties. This is the main part of the encapsulation requirement.
+Encapsulation was used to protect important data and ensure that it can only be accessed or modified through controlled methods and properties.
 
-For example:
+Examples include:
 
-- names and IDs are private inside the person classes
-- appointments keep their own private data
-- the clinic keeps its appointments list private
-- the clinic returns a tuple instead of exposing the original list
+- Names and IDs are stored as private attributes.
+- Appointments protect their internal data.
+- The Clinic keeps its appointments collection private.
+- The Clinic returns a tuple instead of exposing its original appointments list.
 
-I also added checks so invalid data is rejected early. Empty names, invalid IDs, invalid appointment objects and bad time values all raise errors instead of being allowed into the system.
+Validation was also implemented to reject invalid data. Empty names, invalid IDs, invalid appointment objects and invalid time values raise errors.
 
-The appointment system also follows strict rules:
+The appointment system enforces the following rules:
 
-- only pending appointments can be confirmed
-- cancelled appointments cannot be used again
-- an appointment cannot be cancelled once it has started
-- a confirmed appointment cannot be cancelled less than two hours before its start time
+- Only pending appointments can be confirmed.
+- Cancelled appointments cannot be changed.
+- Appointments cannot be cancelled after they have started.
+- Confirmed appointments cannot be cancelled less than two hours before their start time.
 
-The clinic also keeps its own invariants such as unique appointment IDs and valid appointment objects only.
+The Clinic also enforces invariants such as unique appointment IDs and valid appointment objects.
 
----
+## 4. Question 3 – Staff Fees and Polymorphism
 
-## 4. Question 4 – Clinic Logging and Safe Lifecycle
+### Fee calculations
 
-This part was about making the clinic behave in a safe and traceable way. The clinic needs to keep a record of what is happening and log when an action fails.
+Staff fees are calculated using the patient's ID, represented by P.
 
-I used Python's logging module so the clinic can record important actions. The class logs events like opening and closing, as well as failed operations such as invalid appointment entries or duplicate IDs. This makes it easier to see what happened and helps with debugging.
+- **Doctor:** `40 + 5 * (P % 5)`
+- **Nurse:** `10 + (P % 3)`
+- **Pharmacist:** `5`
 
-This matches the assignment because the clinic is not only storing data; it is also managing operations in a controlled way. The validation rules from the earlier questions are still used, and the logging simply adds an extra layer of safety.
+### Polymorphism
 
----
+The abstract `fee(patient_id)` method is defined in the Staff class. Doctor, Nurse and Pharmacist provide their own implementations.
 
-## 5. Question 5 – Lecturer and MedicalLecturer
+A single loop can work with different Staff objects by calling their `role()` and `fee()` methods without using type checks or type tags.
 
-The next part was about adding a lecturer concept without breaking the earlier design. I created a separate `Lecturer` class that stores a module name, and then created `MedicalLecturer` as a class that is both a doctor and a lecturer.
+```python
+for staff in staff_members:
+    print(f"Role: {staff.role()}")
+    print(f"Fee: ${staff.fee(patient.person_id)}")
+```
 
-This was done carefully so that the object still fits the original hierarchy. The `MedicalLecturer` is still a doctor for the clinic, but it also has teaching-related behaviour. The `role()` method still returns `Doctor`, which keeps the medical role consistent.
+### Extensibility
 
-This is a good fit for the project because it extends the same object model instead of creating a completely separate system.
+A new Staff subclass can implement the required methods without changing the existing polymorphic fee loop.
 
----
+### Testing
 
-## 6. Question 6 – Rules Between Objects and the Twist
+Four unit tests cover the staff fee calculations and the effect of different patient IDs.
 
-This part adds the more complex business rules. The important idea is that the rules are not only about one class; they involve different objects working together.
+## 5. Question 4 – Clinic Logging and Safe Lifecycle
 
-Some of the rules I implemented were:
+Python's logging module is used to record important clinic activities.
 
-- a patient cannot have two appointments at the same hour
-- a staff member must have enough gap time between bookings
-- waiting list behaviour is handled by the clinic
-- some patient types get a discount in the fee calculation
-- failed rules are logged so the issue is not hidden
+The Clinic records successful operations and failed actions, including invalid appointment entries and duplicate appointment IDs.
 
-The `P` in the formula means the patient number or patient ID. In the fee formulas, it is used with modulo arithmetic, so the value of `P` decides the result in a predictable way. For example:
+Logging provides a trace of system activity and makes it easier to identify errors during operation and testing.
 
-- Doctor fee = 40 + 5 × (P mod 5)
-- Nurse fee = 10 + (P mod 3)
-- Pharmacist fee = 15
+The Clinic also manages its logging lifecycle through its opening and closing operations.
 
-This means the patient number is used to vary the fee or business rule according to the patient’s ID.
+## 6. Question 5 – Lecturer and MedicalLecturer
 
----
+A separate Lecturer class was introduced to represent teaching-related behaviour and store a module name.
 
-## Design Decision Log
+MedicalLecturer inherits from both Doctor and Lecturer. This allows it to retain the medical staff behaviour while also having lecturer-related behaviour.
 
-### D1. Where does the 2-hour rule live?
-I kept the cancellation rule inside the `Appointment` class because it belongs to the appointment itself. The clinic only checks whether the appointment is valid before it is accepted.
+The `MedicalLecturer.role()` method returns:
 
-### D2. Why is the clock design stable?
-The clock is passed in as an object with a `now()` method. This makes it easier to test the code and keeps the logic separate from the system clock.
+`Doctor and Lecturer`
 
-### D3. What changed when I added Pharmacist?
-Not much in the appointment logic itself. The real change was extending the `Staff` hierarchy and keeping the `fee()` method consistent, so appointments can still work with any staff type without special-case checks.
+MedicalLecturer uses the Doctor fee calculation.
 
-### D4. What should happen if `MedicalLecturer.fee()` returns, and why does `Person` not get created twice?
-`MedicalLecturer` should still use the doctor fee logic, because in this system it is still treated as a doctor. The reason `Person` is not created twice is because it is the parent class of the hierarchy, and the subclass only adds more behaviour.
+The Person constructor should execute only once when creating a MedicalLecturer object. Lecturer does not inherit from Person, preventing a second Person inheritance path.
 
-### D5. What should happen if writing or closing the log itself fails?
-That kind of failure should not be ignored. It should be raised or treated as an error, otherwise the system may continue without tracking real problems.
+## 7. Question 6 – Rules Between Objects and the Twist
 
-### D6. For the twist:
+The Clinic coordinates rules that involve multiple objects.
 
-- the waiting list belongs to the clinic because it is a clinic-wide process
-- a confirmed appointment cannot be bumped because it has already been accepted
-- the gap rule is based on operational spacing, not on type checking
-- the discount logic lives with the patient and clinic logic because it depends on the patient category and the final fee calculation
+These include:
 
----
+- Preventing a patient from having conflicting appointments.
+- Enforcing staff booking gaps.
+- Managing the waiting list through the Clinic.
+- Applying patient discounts during fee calculation.
+- Logging failed operations.
 
-## Final Summary
+The staff object's `gap_hours` property provides the required booking buffer without checking the staff's concrete class type.
 
-This project brings together several object-oriented ideas: encapsulation, validation, inheritance, polymorphism and business rules between objects. The system is not only storing appointments; it is also enforcing rules so that the clinic behaves like a realistic appointment manager.
+The patient's `discount_rate()` method provides the discount information used in fee calculation.
 
-The project stays consistent with the first three questions because all later additions build on the same design instead of replacing it. That is why the model remains clean and easy to follow.
-=======
-# clinic-appointment-system
-Clinic Appointment Management System
->>>>>>> 50da73b35489dca93b8b5eb2f51bf2b0c9e1d46b
+The Clinic coordinates these rules because they involve the relationship between patients, staff and appointments.
+
+## 8. Design Decision Log
+
+### D1. Where does the two-hour rule live?
+
+The two-hour cancellation rule belongs in the Appointment class because it controls appointment status transitions. Placing it in the Clinic would mix appointment-specific rules with clinic management responsibilities.
+
+### D2. Why is the Clock design testable?
+
+The system uses an injected Clock object with a `now()` method instead of directly reading the computer's system time. This allows tests to control time and simulate different cancellation scenarios.
+
+### D3. What changed when Pharmacist was added?
+
+Pharmacist was added as a subclass of Staff and implements its own `role()` and `fee()` methods. The existing polymorphic fee loop does not need to be modified. This demonstrates extensibility.
+
+### D4. How does MedicalLecturer calculate fees, and why is Person not created twice?
+
+MedicalLecturer uses the Doctor fee calculation. For patient ID 77:
+
+`40 + 5 * (77 % 5) = 50`
+
+Python multiple inheritance allows MedicalLecturer to inherit from Doctor and Lecturer. Since Lecturer does not inherit from Person, there is only one Person inheritance path and the Person constructor is called once.
+
+### D5. What happens if writing to or closing the log fails?
+
+Logging failures should be treated as errors rather than silently ignored. The application should preserve the original operation error where possible and ensure resources are closed safely.
+
+### D6. What are the design decisions for the twist?
+
+- The Clinic owns the waiting list because it manages appointments and available slots.
+- Confirmed appointments cannot be bumped because they have already been accepted.
+- Staff buffer hours are obtained through the staff object's `gap_hours` property rather than type checks.
+- Patient discounts are determined through the patient's `discount_rate()` method.
+
+## 9. Final Summary
+
+The Clinic Appointment Management System demonstrates object-oriented programming concepts including abstraction, encapsulation, inheritance, polymorphism and validation.
+
+It also applies business rules to appointment management, staff scheduling, fee calculations and clinic logging.
+
+The implementation builds on the original class structure while allowing additional staff types and clinic rules to be introduced without unnecessary changes to existing functionality.
+

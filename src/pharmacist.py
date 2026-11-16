@@ -10,5 +10,5 @@ class Pharmacist(Staff):
     def role(self):
         return "Pharmacist"
 
-    def fee(self):
-        return 15
+    def fee(self, patient_id):
+        return 5
