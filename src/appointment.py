@@ -41,6 +41,7 @@ class Appointment:
         self.__start_hour = start_hour
         self.__duration = 1
         self.__status = AppointmentStatus.PENDING
+        self.__cancellation_reason = None
 
     @property
     def appointment_id(self):
@@ -66,6 +67,10 @@ class Appointment:
     def status(self):
         return self.__status
 
+    @property
+    def cancellation_reason(self):
+        return self.__cancellation_reason
+
     def confirm(self):
         if self.__status != AppointmentStatus.PENDING:
             raise ValueError("Only pending appointments can be confirmed")
@@ -86,3 +91,10 @@ class Appointment:
                 raise ValueError("Confirmed appointments cannot be cancelled less than 2 hours before start")
 
         self.__status = AppointmentStatus.CANCELLED
+
+    def bump(self):
+        if self.__status != AppointmentStatus.PENDING:
+            raise ValueError("Only pending appointments can be bumped")
+
+        self.__status = AppointmentStatus.CANCELLED
+        self.__cancellation_reason = "bumped"

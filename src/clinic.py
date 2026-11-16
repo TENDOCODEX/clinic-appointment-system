@@ -1,7 +1,7 @@
 
 import logging
 
-from src.appointment import Appointment
+from src.appointment import Appointment, AppointmentStatus
 
 
 class Clinic:
@@ -104,6 +104,28 @@ class Clinic:
                 )
                 raise ValueError("Appointment ID already exists")
 
+        emergency = appointment.patient.person_id % 4 == 1
+        appointment_to_bump = None
+
+        if emergency:
+            for existing in self.__appointments:
+                if (
+                    existing.staff.person_id == appointment.staff.person_id
+                    and existing.start_hour == appointment.start_hour
+                    and existing.status != AppointmentStatus.CANCELLED
+                ):
+                    if existing.status == AppointmentStatus.CONFIRMED:
+                        self.__log.warning(
+                            "[FAILED] Emergency appointment rejected: "
+                            "confirmed appointment %s cannot be bumped",
+                            existing.appointment_id
+                        )
+                        raise ValueError(
+                            "Confirmed appointments cannot be bumped"
+                        )
+                    appointment_to_bump = existing
+                    break
+
         # A patient cannot have two appointments at the same hour
         for existing in self.__appointments:
             if (
@@ -120,6 +142,8 @@ class Clinic:
 
         # Enforce the staff member's required gap between appointments
         for existing in self.__appointments:
+            if existing is appointment_to_bump:
+                continue
             if (
                 existing.staff.person_id == appointment.staff.person_id
                 and abs(
@@ -132,6 +156,14 @@ class Clinic:
                 )
                 raise ValueError("Staff gap rule broken")
 
+        if appointment_to_bump is not None:
+            appointment_to_bump.bump()
+            self.__log.info(
+                "[LOG] appointment %s bumped by emergency appointment %s",
+                appointment_to_bump.appointment_id,
+                appointment.appointment_id
+            )
+
         self.__appointments.append(appointment)
 
         self.__log.info(
@@ -139,3 +171,4 @@ class Clinic:
             appointment.patient.name,
             appointment.start_hour
         )
+
